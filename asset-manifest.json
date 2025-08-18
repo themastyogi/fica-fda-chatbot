@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/fica-fda-chatbot/static/css/main.437ffcf8.css",
+    "main.js": "/fica-fda-chatbot/static/js/main.6a01a0c9.js",
+    "index.html": "/fica-fda-chatbot/index.html",
+    "main.437ffcf8.css.map": "/fica-fda-chatbot/static/css/main.437ffcf8.css.map",
+    "main.6a01a0c9.js.map": "/fica-fda-chatbot/static/js/main.6a01a0c9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.437ffcf8.css",
+    "static/js/main.6a01a0c9.js"
+  ]
+}
