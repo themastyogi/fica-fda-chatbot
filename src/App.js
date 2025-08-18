@@ -9,7 +9,6 @@ const App = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock user data - in real app, this would be in a database
   const [users, setUsers] = useState([
     { 
       id: 1, 
@@ -31,7 +30,6 @@ const App = () => {
     }
   ]);
 
-
   useEffect(() => {
     const savedUser = localStorage.getItem('ficaFdaUser');
     if (savedUser) {
@@ -42,7 +40,7 @@ const App = () => {
         setCurrentView('chat');
       }
     }
-  }, []);
+  }, [users]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -101,8 +99,7 @@ const App = () => {
 
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
-    
-    // Check query limits for free users
+
     if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
       alert('You have reached your free query limit. Please upgrade to premium for unlimited queries.');
       return;
@@ -112,24 +109,21 @@ const App = () => {
     const userMessage = inputMessage;
     setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
     setInputMessage('');
-  try {
-    // ✅ Call your backend (not Hugging Face directly)
-    const response = await fetch("http://localhost:8000/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: userMessage }),
-    });
 
-    if (!response.ok) {
-      throw new Error("Failed to get response from backend");
-    }
-    const data = await response.json();
-    
+    try {
+      // Call backend
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      if (!response.ok) throw new Error("Failed to get response from backend");
+      const data = await response.json();
+
       setChatMessages(prev => [...prev, { type: 'bot', content: data.reply }]);
 
-      // Update queries
+      // Update user's query count
       const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
       setUser(updatedUser);
       const updatedUsers = users.map(u => u.id === user.id ? updatedUser : u);
@@ -140,33 +134,6 @@ const App = () => {
       console.error("Error:", error);
       setChatMessages(prev => [...prev, { type: 'bot', content: 'Sorry, I encountered an error. Please try again.' }]);
     } finally {
-      setIsLoading(false);
-    }
-  };
-      setTimeout(() => {
-        const mockResponses = [
-          "Based on FICA-FDA compliance requirements, I can help you understand that...",
-          "For FDA regulatory compliance, the key considerations are...",
-          "According to FICA standards, your query relates to...",
-          "Let me provide you with the compliance information you need..."
-        ];
-        const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-        
-        setChatMessages(prev => [...prev, { type: 'bot', content: randomResponse }]);
-        
-        // Update user's query count
-        const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
-        setUser(updatedUser);
-        const updatedUsers = users.map(u => u.id === user.id ? updatedUser : u);
-        setUsers(updatedUsers);
-        localStorage.setItem('ficaFdaUser', JSON.stringify(updatedUser));
-        
-        setIsLoading(false);
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Error:', error);
-      setChatMessages(prev => [...prev, { type: 'bot', content: 'Sorry, I encountered an error. Please try again.' }]);
       setIsLoading(false);
     }
   };
