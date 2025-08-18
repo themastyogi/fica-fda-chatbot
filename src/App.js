@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User, Lock, Mail, MessageCircle, Send, LogOut, Crown, AlertCircle } from 'lucide-react';
 
+const MAX_QUERIES_FREE = 5;
+
 const App = () => {
   const [currentView, setCurrentView] = useState('login');
   const [user, setUser] = useState(null);
@@ -10,37 +12,37 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [users, setUsers] = useState([
-    { 
-      id: 1, 
-      email: 'demo@example.com', 
-      password: 'demo123', 
-      name: 'Demo User', 
-      isPaid: false, 
+    {
+      id: 1,
+      email: 'demo@example.com',
+      password: 'demo123',
+      name: 'Demo User',
+      isPaid: false,
       queriesUsed: 0,
-      maxQueries: 5 
+      maxQueries: MAX_QUERIES_FREE,
     },
-    { 
-      id: 2, 
-      email: 'premium@example.com', 
-      password: 'premium123', 
-      name: 'Premium User', 
-      isPaid: true, 
+    {
+      id: 2,
+      email: 'premium@example.com',
+      password: 'premium123',
+      name: 'Premium User',
+      isPaid: true,
       queriesUsed: 0,
-      maxQueries: -1 
-    }
+      maxQueries: -1,
+    },
   ]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('ficaFdaUser');
     if (savedUser) {
       const userData = JSON.parse(savedUser);
-      const currentUser = users.find(u => u.id === userData.id);
+      const currentUser = users.find((u) => u.id === userData.id);
       if (currentUser) {
         setUser(currentUser);
         setCurrentView('chat');
       }
     }
-  }, [users]);
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,7 +53,9 @@ const App = () => {
       alert('Please fill in all fields');
       return;
     }
-    const foundUser = users.find(u => u.email === formData.email && u.password === formData.password);
+    const foundUser = users.find(
+      (u) => u.email === formData.email && u.password === formData.password
+    );
     if (foundUser) {
       setUser(foundUser);
       localStorage.setItem('ficaFdaUser', JSON.stringify(foundUser));
@@ -67,12 +71,12 @@ const App = () => {
       alert('Please fill in all fields');
       return;
     }
-    const existingUser = users.find(u => u.email === formData.email);
+    const existingUser = users.find((u) => u.email === formData.email);
     if (existingUser) {
       alert('User already exists');
       return;
     }
-    
+
     const newUser = {
       id: users.length + 1,
       email: formData.email,
@@ -80,9 +84,9 @@ const App = () => {
       name: formData.name,
       isPaid: false,
       queriesUsed: 0,
-      maxQueries: 5
+      maxQueries: MAX_QUERIES_FREE,
     };
-    
+
     setUsers([...users, newUser]);
     setUser(newUser);
     localStorage.setItem('ficaFdaUser', JSON.stringify(newUser));
@@ -101,38 +105,37 @@ const App = () => {
     if (!inputMessage.trim()) return;
 
     if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
-      alert('You have reached your free query limit. Please upgrade to premium for unlimited queries.');
+      alert('You have reached your free query limit. Please upgrade to premium.');
       return;
     }
 
     setIsLoading(true);
     const userMessage = inputMessage;
-    setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    setChatMessages((prev) => [...prev, { type: 'user', content: userMessage }]);
     setInputMessage('');
 
     try {
-      // Call backend
-      const response = await fetch("http://localhost:8000/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage }),
       });
 
-      if (!response.ok) throw new Error("Failed to get response from backend");
+      if (!response.ok) throw new Error('Backend response failed');
       const data = await response.json();
 
-      setChatMessages(prev => [...prev, { type: 'bot', content: data.reply }]);
+      setChatMessages((prev) => [...prev, { type: 'bot', content: data.reply }]);
 
-      // Update user's query count
       const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
       setUser(updatedUser);
-      const updatedUsers = users.map(u => u.id === user.id ? updatedUser : u);
-      setUsers(updatedUsers);
+      setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
       localStorage.setItem('ficaFdaUser', JSON.stringify(updatedUser));
-
     } catch (error) {
-      console.error("Error:", error);
-      setChatMessages(prev => [...prev, { type: 'bot', content: 'Sorry, I encountered an error. Please try again.' }]);
+      console.error(error);
+      setChatMessages((prev) => [
+        ...prev,
+        { type: 'bot', content: 'Sorry, an error occurred. Please try again.' },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -171,7 +174,7 @@ const App = () => {
               />
             </div>
           )}
-          
+
           <div className="relative">
             <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             <input
@@ -184,7 +187,7 @@ const App = () => {
               required
             />
           </div>
-          
+
           <div className="relative">
             <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             <input
@@ -197,7 +200,7 @@ const App = () => {
               required
             />
           </div>
-          
+
           <button
             onClick={isLogin ? handleLogin : handleSignup}
             type="button"
@@ -209,7 +212,7 @@ const App = () => {
 
         <div className="mt-6 text-center">
           <p className="text-gray-300">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            {isLogin ? "Don't have an account?" : 'Already have an account?'}
             <button
               onClick={() => setCurrentView(isLogin ? 'signup' : 'login')}
               className="ml-2 text-blue-400 hover:text-blue-300 font-semibold"
@@ -243,7 +246,7 @@ const App = () => {
             <p className="text-gray-300 text-sm">AI-Powered Regulatory Guidance</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <div className="text-right">
             <p className="text-white font-medium flex items-center">
@@ -279,11 +282,13 @@ const App = () => {
 
         {chatMessages.map((message, index) => (
           <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-              message.type === 'user' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20'
-            }`}>
+            <div
+              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                message.type === 'user'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20'
+              }`}
+            >
               {message.content}
             </div>
           </div>
@@ -296,8 +301,8 @@ const App = () => {
                 <div className="animate-pulse">Thinking...</div>
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -310,10 +315,9 @@ const App = () => {
         <div className="mx-6 mb-4 p-3 bg-orange-500/20 border border-orange-400/30 rounded-lg flex items-center space-x-2">
           <AlertCircle className="w-5 h-5 text-orange-400" />
           <p className="text-orange-200 text-sm">
-            {user.queriesUsed >= user.maxQueries 
+            {user.queriesUsed >= user.maxQueries
               ? 'You have reached your free query limit. Upgrade to premium for unlimited access!'
-              : `You have ${user.maxQueries - user.queriesUsed} free queries remaining.`
-            }
+              : `You have ${user.maxQueries - user.queriesUsed} free queries remaining.`}
           </p>
         </div>
       )}
@@ -344,7 +348,7 @@ const App = () => {
 
   return (
     <>
-      {currentView === 'login' && <AuthForm isLogin={true} />}
+      {currentView === 'login' && <AuthForm isLogin />}
       {currentView === 'signup' && <AuthForm isLogin={false} />}
       {currentView === 'chat' && user && <ChatInterface />}
     </>
