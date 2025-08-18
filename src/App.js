@@ -31,9 +31,16 @@ const App = () => {
     }
   ]);
 
-  // Replace this with your actual Hugging Face API endpoint
-  const HF_API_ENDPOINT = "https://api-inference.huggingface.co/models/YOUR_MODEL_NAME";
-  const HF_API_KEY = "YOUR_HF_API_KEY"; // Store this securely in environment variables
+async function sendMessage(message) {
+  const response = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: message }),
+  });
+  const data = await response.json();
+  return data;
+}
+
 
   useEffect(() => {
     const savedUser = localStorage.getItem('ficaFdaUser');
