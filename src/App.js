@@ -31,16 +31,6 @@ const App = () => {
     }
   ]);
 
-async function sendMessage(message) {
-  const response = await fetch("/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: message }),
-  });
-  const data = await response.json();
-  return data;
-}
-
 
   useEffect(() => {
     const savedUser = localStorage.getItem('ficaFdaUser');
@@ -122,26 +112,37 @@ async function sendMessage(message) {
     const userMessage = inputMessage;
     setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
     setInputMessage('');
+  try {
+    // ✅ Call your backend (not Hugging Face directly)
+    const response = await fetch("http://localhost:8000/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
 
-    try {
-      // This is a mock API call - replace with actual Hugging Face API call
-      // const response = await fetch(HF_API_ENDPOINT, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${HF_API_KEY}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     inputs: userMessage,
-      //     parameters: {
-      //       max_length: 150,
-      //       temperature: 0.7
-      //     }
-      //   }),
-      // });
-      // const data = await response.json();
-      
-      // Mock response for demo
+    if (!response.ok) {
+      throw new Error("Failed to get response from backend");
+    }
+    const data = await response.json();
+    
+      setChatMessages(prev => [...prev, { type: 'bot', content: data.reply }]);
+
+      // Update queries
+      const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
+      setUser(updatedUser);
+      const updatedUsers = users.map(u => u.id === user.id ? updatedUser : u);
+      setUsers(updatedUsers);
+      localStorage.setItem('ficaFdaUser', JSON.stringify(updatedUser));
+
+    } catch (error) {
+      console.error("Error:", error);
+      setChatMessages(prev => [...prev, { type: 'bot', content: 'Sorry, I encountered an error. Please try again.' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
       setTimeout(() => {
         const mockResponses = [
           "Based on FICA-FDA compliance requirements, I can help you understand that...",
