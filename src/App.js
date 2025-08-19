@@ -140,7 +140,7 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [inputMessage, user, users]);
+  }, [inputMessage, user]);
 
   const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
