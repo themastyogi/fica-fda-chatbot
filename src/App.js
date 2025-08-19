@@ -228,6 +228,7 @@ const handleKeyDown = useCallback(
               placeholder="Password"
               value={formData.password}
               onChange={handleInputChange}
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   // ✅ Keystroke bug FIX
