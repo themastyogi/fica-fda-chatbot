@@ -191,7 +191,7 @@ const handleKeyDown = useCallback(
                   if (e.key === "Enter") {
                     e.preventDefault();
                     // ✅ Keystroke bug FIX — call submit handler directly
-                    handleSubmit(e);
+                    sendMessage();
                   }
                 }}
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -212,7 +212,7 @@ const handleKeyDown = useCallback(
                 if (e.key === "Enter") {
                   e.preventDefault();
                   // ✅ Keystroke bug FIX
-                  handleSubmit(e);
+                  sendMessage();
                 }
               }}
               className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -232,7 +232,7 @@ const handleKeyDown = useCallback(
                 if (e.key === "Enter") {
                   e.preventDefault();
                   // ✅ Keystroke bug FIX
-                  handleSubmit(e);
+                  sendMessage();
                 }
               }}
               className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
