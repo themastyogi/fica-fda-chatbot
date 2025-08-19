@@ -100,47 +100,64 @@ const App = () => {
     setCurrentView('login');
     setChatMessages([]);
   }, []);
-
-  const sendMessage = useCallback(async () => {
-    if (!inputMessage.trim()) return;
+const sendMessage = useCallback(async () => {
+  setInputMessage((currentMessage) => {
+    if (!currentMessage.trim()) return ""; // don’t send empty
 
     if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
-      alert('You have reached your free query limit. Please upgrade to premium.');
-      return;
+      alert("You have reached your free query limit. Please upgrade to premium.");
+      return currentMessage; // don’t clear input if blocked
     }
 
-    setIsLoading(true);
-    const userMessage = inputMessage;
-    setChatMessages((prev) => [...prev, { type: 'user', content: userMessage }]);
-    setInputMessage('');
+    // Add user message immediately
+    setChatMessages((prev) => [
+      ...prev,
+      { type: "user", content: currentMessage },
+    ]);
 
-    try {
-      const response = await fetch('http://localhost:8000/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage }),
-      });
+    // Fire async bot call AFTER state update
+    (async () => {
+      try {
+        setIsLoading(true);
 
-      if (!response.ok) throw new Error('Backend response failed');
-      const data = await response.json();
+        const response = await fetch("http://localhost:8000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: currentMessage }),
+        });
 
-      setChatMessages((prev) => [...prev, { type: 'bot', content: data.reply }]);
+        if (!response.ok) throw new Error("Backend response failed");
 
-      const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
-      setUser(updatedUser);
-      // Use functional update to prevent unnecessary re-renders
-      setUsers(prevUsers => prevUsers.map((u) => (u.id === user.id ? updatedUser : u)));
-      localStorage.setItem('ficaFdaUser', JSON.stringify(updatedUser));
-    } catch (error) {
-      console.error(error);
-      setChatMessages((prev) => [
-        ...prev,
-        { type: 'bot', content: 'Sorry, an error occurred. Please try again.' },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [inputMessage, user]);
+        const data = await response.json();
+
+        setChatMessages((prev) => [
+          ...prev,
+          { type: "bot", content: data.reply },
+        ]);
+
+        const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
+        setUser(updatedUser);
+
+        // ✅ functional update avoids stale users
+        setUsers((prevUsers) =>
+          prevUsers.map((u) => (u.id === user.id ? updatedUser : u))
+        );
+
+        localStorage.setItem("ficaFdaUser", JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error(error);
+        setChatMessages((prev) => [
+          ...prev,
+          { type: "bot", content: "Sorry, an error occurred. Please try again." },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+
+    return ""; // ✅ clears the input
+  });
+}, [user]);
 
   const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
