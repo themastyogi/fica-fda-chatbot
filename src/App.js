@@ -100,71 +100,67 @@ const App = () => {
     setCurrentView('login');
     setChatMessages([]);
   }, []);
+// ✅ sendMessage rewritten (important part for keystroke bug fix)
 const sendMessage = useCallback(async () => {
-  setInputMessage((currentMessage) => {
-    if (!currentMessage.trim()) return ""; // don’t send empty
+  if (!inputMessage.trim()) return;
 
-    if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
-      alert("You have reached your free query limit. Please upgrade to premium.");
-      return currentMessage; // don’t clear input if blocked
-    }
+  if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
+    alert("You have reached your free query limit. Please upgrade to premium.");
+    return;
+  }
 
-    // Add user message immediately
+  // ✅ Keystroke bug FIX — clear input immediately
+  setChatMessages((prev) => [
+    ...prev,
+    { type: "user", content: inputMessage },
+  ]);
+  setInputMessage(""); // Keystroke bug FIX
+
+  try {
+    setIsLoading(true);
+
+    const response = await fetch("http://localhost:8000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: inputMessage }),
+    });
+
+    if (!response.ok) throw new Error("Backend response failed");
+
+    const data = await response.json();
+
     setChatMessages((prev) => [
       ...prev,
-      { type: "user", content: currentMessage },
+      { type: "bot", content: data.reply },
     ]);
 
-    // Fire async bot call AFTER state update
-    (async () => {
-      try {
-        setIsLoading(true);
+    const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
+    setUser(updatedUser);
+    setUsers((prevUsers) =>
+      prevUsers.map((u) => (u.id === user.id ? updatedUser : u))
+    );
+    localStorage.setItem("ficaFdaUser", JSON.stringify(updatedUser));
+  } catch (error) {
+    console.error(error);
+    setChatMessages((prev) => [
+      ...prev,
+      { type: "bot", content: "Sorry, an error occurred. Please try again." },
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+}, [inputMessage, user]);
 
-        const response = await fetch("http://localhost:8000/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: currentMessage }),
-        });
-
-        if (!response.ok) throw new Error("Backend response failed");
-
-        const data = await response.json();
-
-        setChatMessages((prev) => [
-          ...prev,
-          { type: "bot", content: data.reply },
-        ]);
-
-        const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
-        setUser(updatedUser);
-
-        // ✅ functional update avoids stale users
-        setUsers((prevUsers) =>
-          prevUsers.map((u) => (u.id === user.id ? updatedUser : u))
-        );
-
-        localStorage.setItem("ficaFdaUser", JSON.stringify(updatedUser));
-      } catch (error) {
-        console.error(error);
-        setChatMessages((prev) => [
-          ...prev,
-          { type: "bot", content: "Sorry, an error occurred. Please try again." },
-        ]);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-
-    return ""; // ✅ clears the input
-  });
-}, [user]);
-
-  const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+// ✅ Added a new function to replace old onKeyPress
+const handleKeyDown = useCallback(
+  (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
-  }, [sendMessage]);
+  },
+  [sendMessage]
+);
 
   const handleChatInputChange = useCallback((e) => {
     setInputMessage(e.target.value);
@@ -191,6 +187,13 @@ const sendMessage = useCallback(async () => {
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    // ✅ Keystroke bug FIX — call submit handler directly
+                    handleSubmit(e);
+                  }
+                }}
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
@@ -205,6 +208,13 @@ const sendMessage = useCallback(async () => {
               placeholder="Email Address"
               value={formData.email}
               onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // ✅ Keystroke bug FIX
+                  handleSubmit(e);
+                }
+              }}
               className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -218,6 +228,12 @@ const sendMessage = useCallback(async () => {
               placeholder="Password"
               value={formData.password}
               onChange={handleInputChange}
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // ✅ Keystroke bug FIX
+                  handleSubmit(e);
+                }
+              }}
               className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
