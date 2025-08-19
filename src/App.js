@@ -42,7 +42,7 @@ const App = () => {
         setCurrentView('chat');
       }
     }
-  }, [users]);
+  }, [users]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleInputChange = useCallback((e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
