@@ -368,7 +368,7 @@ const handleKeyDown = useCallback(
             type="text"
             value={inputMessage}
             onChange={handleChatInputChange}
-            onKeyDown=={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 sendMessage();
