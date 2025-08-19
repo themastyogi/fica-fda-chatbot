@@ -94,6 +94,15 @@ const App = () => {
     setFormData({ email: '', password: '', name: '' });
   }, [formData, users]);
 
+  const handleSubmit = useCallback((e) => {
+  e.preventDefault();
+  if (currentView === 'login') {
+    handleLogin();
+  } else if (currentView === 'signup') {
+    handleSignup();
+  }
+}, [currentView, handleLogin, handleSignup]);
+
   const handleLogout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('ficaFdaUser');
