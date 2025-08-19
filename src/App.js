@@ -334,7 +334,7 @@ const App = () => {
             type="text"
             value={inputMessage}
             onChange={handleChatInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             placeholder="Ask about FICA-FDA compliance..."
             className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading || (!user.isPaid && user.queriesUsed >= user.maxQueries)}
