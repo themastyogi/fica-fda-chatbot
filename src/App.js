@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { User, Lock, Mail, MessageCircle, Send, LogOut, Crown, AlertCircle } from 'lucide-react';
 
 const MAX_QUERIES_FREE = 5;
@@ -44,11 +44,11 @@ const App = () => {
     }
   }, [users]);
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleInputChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     if (!formData.email || !formData.password) {
       alert('Please fill in all fields');
       return;
@@ -64,9 +64,9 @@ const App = () => {
     } else {
       alert('Invalid credentials');
     }
-  };
+  }, [formData, users]);
 
-  const handleSignup = () => {
+  const handleSignup = useCallback(() => {
     if (!formData.email || !formData.password || !formData.name) {
       alert('Please fill in all fields');
       return;
@@ -92,16 +92,16 @@ const App = () => {
     localStorage.setItem('ficaFdaUser', JSON.stringify(newUser));
     setCurrentView('chat');
     setFormData({ email: '', password: '', name: '' });
-  };
+  }, [formData, users]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('ficaFdaUser');
     setCurrentView('login');
     setChatMessages([]);
-  };
+  }, []);
 
-  const sendMessage = async () => {
+  const sendMessage = useCallback(async () => {
     if (!inputMessage.trim()) return;
 
     if (!user.isPaid && user.queriesUsed >= user.maxQueries) {
@@ -128,7 +128,8 @@ const App = () => {
 
       const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
       setUser(updatedUser);
-      setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+      // Use functional update to prevent unnecessary re-renders
+      setUsers(prevUsers => prevUsers.map((u) => (u.id === user.id ? updatedUser : u)));
       localStorage.setItem('ficaFdaUser', JSON.stringify(updatedUser));
     } catch (error) {
       console.error(error);
@@ -139,14 +140,18 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [inputMessage, user, users]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
-  };
+  }, [sendMessage]);
+
+  const handleChatInputChange = useCallback((e) => {
+    setInputMessage(e.target.value);
+  }, []);
 
   const AuthForm = ({ isLogin }) => (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-800 flex items-center justify-center p-4">
@@ -273,7 +278,7 @@ const App = () => {
             <div className="bg-gradient-to-r from-blue-400 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-white text-xl font-semibold mb-2">Welcome to FICA-FDA Compliance Assistant</h3>
+            <h3 className="text-white text-xl font-semibual mb-2">Welcome to FICA-FDA Compliance Assistant</h3>
             <p className="text-gray-300 max-w-md mx-auto">
               Ask me anything about FICA-FDA compliance, regulatory requirements, or related guidelines.
             </p>
@@ -328,7 +333,7 @@ const App = () => {
           <input
             type="text"
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
+            onChange={handleChatInputChange}
             onKeyPress={handleKeyPress}
             placeholder="Ask about FICA-FDA compliance..."
             className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
