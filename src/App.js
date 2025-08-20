@@ -1,19 +1,5 @@
 import React, { useState } from 'react';
-import {
-  User,
-  Lock,
-  Mail,
-  MessageCircle,
-  Send,
-  LogOut,
-  Crown,
-  AlertCircle,
-  Shield,
-  Settings,
-  Users,
-  ArrowLeft,
-  CreditCard,
-} from 'lucide-react';
+import { User, Send, LogOut, Crown, Shield, Settings } from 'lucide-react';
 
 const MAX_QUERIES_EXPLORER = 5;
 
