@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import { User, Lock, Mail, MessageCircle, Send, LogOut, Crown, AlertCircle, Shield, Settings, Users, ArrowLeft, CreditCard } from 'lucide-react';
+import {
+  User,
+  Lock,
+  Mail,
+  MessageCircle,
+  Send,
+  LogOut,
+  Crown,
+  AlertCircle,
+  Shield,
+  Settings,
+  Users,
+  ArrowLeft,
+  CreditCard,
+} from 'lucide-react';
 
 const MAX_QUERIES_EXPLORER = 5;
 
@@ -37,26 +51,26 @@ const App = () => {
       name: 'Admin User',
       role: 'admin',
       queriesUsed: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
     {
       id: 2,
-      email: 'explorer@example.com', 
+      email: 'explorer@example.com',
       password: 'explorer123',
       name: 'Explorer User',
       role: 'explorer',
       queriesUsed: 2,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
     {
       id: 3,
       email: 'pro@example.com',
-      password: 'pro123', 
+      password: 'pro123',
       name: 'Pro User',
       role: 'pro',
       queriesUsed: 15,
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   ]);
 
   // Get user limits based on role
@@ -88,15 +102,15 @@ const App = () => {
       return;
     }
 
-    if (userDatabase.find(u => u.email === signupEmail.toLowerCase())) {
+    if (userDatabase.find((u) => u.email === signupEmail.toLowerCase())) {
       alert('User with this email already exists');
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const newUser = {
         id: Date.now(),
@@ -105,20 +119,19 @@ const App = () => {
         name: signupName.trim(),
         role: 'explorer',
         queriesUsed: 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
-      setUserDatabase(prev => [...prev, newUser]);
+      setUserDatabase((prev) => [...prev, newUser]);
       setUser(newUser);
       setCurrentView('chat');
-      
+
       // Clear signup form
       setSignupName('');
       setSignupEmail('');
       setSignupPassword('');
-      
+
       console.log(`New explorer user created: ${newUser.email}`);
-      
     } catch (error) {
       console.error('Signup error:', error);
       alert('Signup failed. Please try again.');
@@ -139,27 +152,26 @@ const App = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const foundUser = userDatabase.find(
-        u => u.email === loginEmail.toLowerCase() && u.password === loginPassword
+        (u) => u.email === loginEmail.toLowerCase() && u.password === loginPassword
       );
-      
+
       if (foundUser) {
         setUser(foundUser);
         setCurrentView('chat');
-        
+
         // Clear login form
         setLoginEmail('');
         setLoginPassword('');
-        
+
         console.log(`User ${foundUser.email} logged in as ${foundUser.role}`);
       } else {
         alert('Invalid email or password');
       }
-      
     } catch (error) {
       console.error('Login error:', error);
       alert('Login failed. Please try again.');
@@ -187,20 +199,17 @@ const App = () => {
     setIsLoading(true);
     try {
       // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Update user role to pro
       const updatedUser = { ...user, role: 'pro' };
       setUser(updatedUser);
-      
+
       // Update in database
-      setUserDatabase(prev => prev.map(u => 
-        u.id === user.id ? updatedUser : u
-      ));
-      
+      setUserDatabase((prev) => prev.map((u) => (u.id === user.id ? updatedUser : u)));
+
       alert('Congratulations! You have been upgraded to Pro. You now have unlimited queries!');
       setCurrentView('chat');
-      
     } catch (error) {
       alert('Upgrade failed. Please try again.');
     } finally {
@@ -209,14 +218,12 @@ const App = () => {
   };
 
   const updateUserRole = (userId, newRole) => {
-    setUserDatabase(prev => prev.map(u => 
-      u.id === userId ? { ...u, role: newRole } : u
-    ));
-    
+    setUserDatabase((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
+
     if (user && user.id === userId) {
-      setUser(prev => ({ ...prev, role: newRole }));
+      setUser((prev) => ({ ...prev, role: newRole }));
     }
-    
+
     alert(`User role updated to ${newRole}`);
   };
 
@@ -231,37 +238,37 @@ const App = () => {
 
     const sanitizedMessage = sanitizeInput(inputMessage.trim());
     setIsLoading(true);
-    setChatMessages(prev => [...prev, { type: 'user', content: sanitizedMessage }]);
+    setChatMessages((prev) => [...prev, { type: 'user', content: sanitizedMessage }]);
     setInputMessage('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       const responses = [
         'Based on FICA-FDA regulations, this requires documentation of compliance procedures and thorough validation protocols.',
         'According to current FDA guidelines, you need to ensure proper validation protocols are implemented with detailed documentation.',
         'The FICA compliance framework suggests implementing robust security measures with regular auditing and monitoring.',
         'For regulatory compliance, please consider comprehensive documentation requirements and staff training programs.',
-        'FDA regulations require systematic approach to quality management and continuous monitoring of compliance metrics.'
+        'FDA regulations require systematic approach to quality management and continuous monitoring of compliance metrics.',
       ];
-      
+
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      setChatMessages(prev => [...prev, { type: 'bot', content: randomResponse }]);
+      setChatMessages((prev) => [...prev, { type: 'bot', content: randomResponse }]);
 
       // Update query count
       const updatedUser = { ...user, queriesUsed: user.queriesUsed + 1 };
       setUser(updatedUser);
-      
-      setUserDatabase(prev => prev.map(u => 
-        u.id === user.id ? updatedUser : u
-      ));
-      
+
+      setUserDatabase((prev) => prev.map((u) => (u.id === user.id ? updatedUser : u)));
     } catch (error) {
       console.error('Chat error:', error);
-      setChatMessages(prev => [...prev, { 
-        type: 'bot', 
-        content: 'Sorry, an error occurred. Please try again.' 
-      }]);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          type: 'bot',
+          content: 'Sorry, an error occurred. Please try again.',
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -269,19 +276,27 @@ const App = () => {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'admin': return 'text-red-400';
-      case 'pro': return 'text-yellow-400';
-      case 'explorer': return 'text-green-400';
-      default: return 'text-gray-400';
+      case 'admin':
+        return 'text-red-400';
+      case 'pro':
+        return 'text-yellow-400';
+      case 'explorer':
+        return 'text-green-400';
+      default:
+        return 'text-gray-400';
     }
   };
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'admin': return <Settings className="w-4 h-4" />;
-      case 'pro': return <Crown className="w-4 h-4" />;
-      case 'explorer': return <User className="w-4 h-4" />;
-      default: return <User className="w-4 h-4" />;
+      case 'admin':
+        return <Settings className="w-4 h-4" />;
+      case 'pro':
+        return <Crown className="w-4 h-4" />;
+      case 'explorer':
+        return <User className="w-4 h-4" />;
+      default:
+        return <User className="w-4 h-4" />;
     }
   };
 
@@ -319,7 +334,9 @@ const App = () => {
                 type="email"
                 placeholder="Email Address"
                 value={showSignup ? signupEmail : loginEmail}
-                onChange={(e) => showSignup ? setSignupEmail(e.target.value) : setLoginEmail(e.target.value)}
+                onChange={(e) =>
+                  showSignup ? setSignupEmail(e.target.value) : setLoginEmail(e.target.value)
+                }
                 maxLength="100"
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -331,7 +348,9 @@ const App = () => {
                 type="password"
                 placeholder="Password"
                 value={showSignup ? signupPassword : loginPassword}
-                onChange={(e) => showSignup ? setSignupPassword(e.target.value) : setLoginPassword(e.target.value)}
+                onChange={(e) =>
+                  showSignup ? setSignupPassword(e.target.value) : setLoginPassword(e.target.value)
+                }
                 maxLength="50"
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-12 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -342,7 +361,7 @@ const App = () => {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold py-3 rounded-lg transition-all duration-200"
             >
-              {isLoading ? 'Processing...' : (showSignup ? 'Create Explorer Account' : 'Sign In')}
+              {isLoading ? 'Processing...' : showSignup ? 'Create Explorer Account' : 'Sign In'}
             </button>
           </div>
 
@@ -376,8 +395,8 @@ const App = () => {
           {/* Role explanation */}
           <div className="mt-4 p-3 bg-green-500/20 rounded-lg border border-green-400/30">
             <p className="text-xs text-green-200">
-              <strong>New users start as Explorer</strong> (5 free queries). 
-              Upgrade to Pro for unlimited queries. Admins can manage all users.
+              <strong>New users start as Explorer</strong> (5 free queries). Upgrade to Pro for
+              unlimited queries. Admins can manage all users.
             </p>
           </div>
         </div>
@@ -386,7 +405,7 @@ const App = () => {
   }
 
   // UPGRADE VIEW
-  if (currentView === 'upgrade') {
+  if (currentView === 'upgrade' && user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-800 flex items-center justify-center p-4">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 w-full max-w-lg border border-white/20 shadow-2xl">
@@ -422,7 +441,9 @@ const App = () => {
             {/* Pricing */}
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-lg p-4 text-center">
               <h3 className="text-blue-400 font-semibold mb-2">Pro Plan Pricing</h3>
-              <div className="text-3xl font-bold text-white mb-1">$29<span className="text-lg text-gray-300">/month</span></div>
+              <div className="text-3xl font-bold text-white mb-1">
+                $29<span className="text-lg text-gray-300">/month</span>
+              </div>
               <p className="text-gray-300 text-sm">Cancel anytime</p>
             </div>
 
@@ -453,7 +474,8 @@ const App = () => {
 
             <div className="mt-4 p-3 bg-gray-500/20 rounded-lg border border-gray-400/30">
               <p className="text-xs text-gray-300 text-center">
-                This is a demo upgrade process. In a real application, this would integrate with Stripe, PayPal, or another payment processor.
+                This is a demo upgrade process. In a real application, this would integrate with
+                Stripe, PayPal, or another payment processor.
               </p>
             </div>
           </div>
@@ -503,70 +525,72 @@ const App = () => {
               <Users className="w-5 h-5 mr-2" />
               User Management
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userDatabase.filter(u => u.id !== user.id).map(dbUser => (
-                <div key={dbUser.id} className="bg-white/5 p-4 rounded-lg border border-white/10">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-white font-medium">{dbUser.name}</h3>
-                      <p className="text-gray-400 text-sm">{dbUser.email}</p>
+              {userDatabase
+                .filter((u) => u.id !== user.id)
+                .map((dbUser) => (
+                  <div key={dbUser.id} className="bg-white/5 p-4 rounded-lg border border-white/10">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-white font-medium">{dbUser.name}</h3>
+                        <p className="text-gray-400 text-sm">{dbUser.email}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded ${getRoleColor(dbUser.role)} bg-white/10`}>
+                        {dbUser.role.toUpperCase()}
+                      </span>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded ${getRoleColor(dbUser.role)} bg-white/10`}>
-                      {dbUser.role.toUpperCase()}
-                    </span>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <p className="text-gray-300 text-sm">
-                      Queries: <span className="font-medium">{dbUser.queriesUsed}</span>
-                      {dbUser.role === 'explorer' && ` / ${MAX_QUERIES_EXPLORER}`}
-                    </p>
-                    <p className="text-gray-400 text-xs">
-                      Created: {new Date(dbUser.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="text-white text-sm font-medium">Change Role:</p>
-                    <div className="flex space-x-1">
-                      <button
-                        onClick={() => updateUserRole(dbUser.id, 'explorer')}
-                        disabled={dbUser.role === 'explorer'}
-                        className={`px-2 py-1 rounded text-xs transition-colors ${
-                          dbUser.role === 'explorer' 
-                            ? 'bg-green-500/40 text-green-300 cursor-not-allowed' 
-                            : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                        }`}
-                      >
-                        Explorer
-                      </button>
-                      <button
-                        onClick={() => updateUserRole(dbUser.id, 'pro')}
-                        disabled={dbUser.role === 'pro'}
-                        className={`px-2 py-1 rounded text-xs transition-colors ${
-                          dbUser.role === 'pro' 
-                            ? 'bg-yellow-500/40 text-yellow-300 cursor-not-allowed' 
-                            : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-                        }`}
-                      >
-                        Pro
-                      </button>
-                      <button
-                        onClick={() => updateUserRole(dbUser.id, 'admin')}
-                        disabled={dbUser.role === 'admin'}
-                        className={`px-2 py-1 rounded text-xs transition-colors ${
-                          dbUser.role === 'admin' 
-                            ? 'bg-red-500/40 text-red-300 cursor-not-allowed' 
-                            : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                        }`}
-                      >
-                        Admin
-                      </button>
+
+                    <div className="mb-4">
+                      <p className="text-gray-300 text-sm">
+                        Queries: <span className="font-medium">{dbUser.queriesUsed}</span>
+                        {dbUser.role === 'explorer' && ` / ${MAX_QUERIES_EXPLORER}`}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        Created: {new Date(dbUser.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-white text-sm font-medium">Change Role:</p>
+                      <div className="flex space-x-1">
+                        <button
+                          onClick={() => updateUserRole(dbUser.id, 'explorer')}
+                          disabled={dbUser.role === 'explorer'}
+                          className={`px-2 py-1 rounded text-xs transition-colors ${
+                            dbUser.role === 'explorer'
+                              ? 'bg-green-500/40 text-green-300 cursor-not-allowed'
+                              : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                          }`}
+                        >
+                          Explorer
+                        </button>
+                        <button
+                          onClick={() => updateUserRole(dbUser.id, 'pro')}
+                          disabled={dbUser.role === 'pro'}
+                          className={`px-2 py-1 rounded text-xs transition-colors ${
+                            dbUser.role === 'pro'
+                              ? 'bg-yellow-500/40 text-yellow-300 cursor-not-allowed'
+                              : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+                          }`}
+                        >
+                          Pro
+                        </button>
+                        <button
+                          onClick={() => updateUserRole(dbUser.id, 'admin')}
+                          disabled={dbUser.role === 'admin'}
+                          className={`px-2 py-1 rounded text-xs transition-colors ${
+                            dbUser.role === 'admin'
+                              ? 'bg-red-500/40 text-red-300 cursor-not-allowed'
+                              : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                          }`}
+                        >
+                          Admin
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
@@ -577,7 +601,9 @@ const App = () => {
   // CHAT VIEW
   if (currentView === 'chat' && user) {
     const userLimits = getUserLimits(user.role);
-    
+    const remaining =
+      userLimits.maxQueries === -1 ? null : Math.max(userLimits.maxQueries - user.queriesUsed, 0);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col">
         {/* Header */}
@@ -597,13 +623,11 @@ const App = () => {
               <p className="text-white font-medium flex items-center">
                 <span className={getRoleColor(user.role)}>{getRoleIcon(user.role)}</span>
                 <span className="ml-1">{user.name}</span>
-                <span className={`ml-2 text-xs ${getRoleColor(user.role)}`}>
-                  {user.role.toUpperCase()}
-                </span>
+                <span className={`ml-2 text-xs ${getRoleColor(user.role)}`}>{user.role.toUpperCase()}</span>
               </p>
               <p className="text-gray-300 text-sm">
-                {userLimits.maxQueries === -1 
-                  ? `${user.queriesUsed} queries used` 
+                {userLimits.maxQueries === -1
+                  ? `${user.queriesUsed} queries used`
                   : `${user.queriesUsed}/${userLimits.maxQueries} queries used`}
               </p>
             </div>
@@ -639,51 +663,115 @@ const App = () => {
           </div>
         </div>
 
-  {/* Chat Area */}
-  <div className="flex-1 overflow-y-auto p-6 space-y-4">
-    {chatMessages.length === 0 && (
-      <div className="text-center py-12">
-        <div className="bg-gradient-to-r from-blue-400 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <MessageCircle className="w-8 h-8 text-white" />
-        </div>
-        <h3 className="text-white text-xl font-semibold mb-2">
-          Welcome to FICA-FDA Compliance Assistant
-        </h3>
-        <p className="text-gray-300 max-w-md mx-auto">
-          Ask me anything about FICA-FDA compliance, regulatory requirements, or related guidelines.
-        </p>
-      </div>
-    )}
-  
-    {chatMessages.map((message, index) => (
-      <div
-        key={index}
-        className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-      >
-        <div
-          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-            message.type === "user"
-              ? "bg-blue-600 text-white"
-              : "bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20"
-          }`}
-        >
-          {message.content}
-        </div>
-      </div>
-    ))}
-  
-    {isLoading && (
-      <div className="flex justify-start">
-        <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <div className="animate-pulse">Thinking...</div>
-            <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        {/* Chat Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {chatMessages.length === 0 && (
+            <div className="text-center py-12">
+              <div className="bg-gradient-to-r from-blue-400 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-white text-xl font-semibold mb-2">
+                Welcome to FICA-FDA Compliance Assistant
+              </h3>
+              <p className="text-gray-300 max-w-md mx-auto">
+                Ask me anything about FICA-FDA compliance, regulatory requirements, or related guidelines.
+              </p>
             </div>
+          )}
+
+          {chatMessages.map((message, index) => (
+            <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  message.type === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20'
+                }`}
+              >
+                {message.content}
+              </div>
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="animate-pulse">Thinking...</div>
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Input Area */}
+        <div className="p-4 bg-white/10 backdrop-blur-lg border-t border-white/20">
+          <div className="max-w-3xl mx-auto flex items-center space-x-3">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder={
+                user.role === 'explorer' && remaining === 0
+                  ? 'Query limit reached — upgrade to continue'
+                  : 'Type your message...'
+              }
+              disabled={isLoading || (user.role === 'explorer' && remaining === 0)}
+              className="flex-1 px-4 py-3 rounded-lg bg-gray-800/60 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
+              maxLength={1000}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={
+                isLoading ||
+                !inputMessage.trim() ||
+                (user.role === 'explorer' && remaining === 0)
+              }
+              className="p-3 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 transition-colors"
+              title="Send"
+            >
+              <Send className="w-5 h-5 text-white" />
+            </button>
           </div>
+
+          {user.role === 'explorer' && remaining !== null && (
+            <p className="text-xs text-gray-300 text-center mt-2">
+              {remaining} free {remaining === 1 ? 'query' : 'queries'} left.&nbsp;
+              <button
+                onClick={handleUpgradeRequest}
+                className="text-yellow-300 hover:text-yellow-200 underline"
+              >
+                Upgrade to Pro
+              </button>{' '}
+              for unlimited access.
+            </p>
+          )}
         </div>
       </div>
-    )}
-  </div>
+    );
+  }
+
+  // Fallback (shouldn't happen often)
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+      <div className="text-center space-y-4">
+        <AlertCircle className="w-10 h-10 mx-auto text-yellow-400" />
+        <p>Something went wrong. Returning to login…</p>
+        <button
+          onClick={() => setCurrentView('login')}
+          className="px-4 py-2 bg-blue-600 rounded-lg"
+        >
+          Go to Login
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default App;
