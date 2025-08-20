@@ -639,51 +639,51 @@ const App = () => {
           </div>
         </div>
 
-{/* Chat Area */}
-<div className="flex-1 overflow-y-auto p-6 space-y-4">
-  {chatMessages.length === 0 && (
-    <div className="text-center py-12">
-      <div className="bg-gradient-to-r from-blue-400 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-        <MessageCircle className="w-8 h-8 text-white" />
+  {/* Chat Area */}
+  <div className="flex-1 overflow-y-auto p-6 space-y-4">
+    {chatMessages.length === 0 && (
+      <div className="text-center py-12">
+        <div className="bg-gradient-to-r from-blue-400 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <MessageCircle className="w-8 h-8 text-white" />
+        </div>
+        <h3 className="text-white text-xl font-semibold mb-2">
+          Welcome to FICA-FDA Compliance Assistant
+        </h3>
+        <p className="text-gray-300 max-w-md mx-auto">
+          Ask me anything about FICA-FDA compliance, regulatory requirements, or related guidelines.
+        </p>
       </div>
-      <h3 className="text-white text-xl font-semibold mb-2">
-        Welcome to FICA-FDA Compliance Assistant
-      </h3>
-      <p className="text-gray-300 max-w-md mx-auto">
-        Ask me anything about FICA-FDA compliance, regulatory requirements, or related guidelines.
-      </p>
-    </div>
-  )}
-
-  {chatMessages.map((message, index) => (
-    <div
-      key={index}
-      className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-    >
+    )}
+  
+    {chatMessages.map((message, index) => (
       <div
-        className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-          message.type === "user"
-            ? "bg-blue-600 text-white"
-            : "bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20"
-        }`}
+        key={index}
+        className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
       >
-        {message.content}
+        <div
+          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+            message.type === "user"
+              ? "bg-blue-600 text-white"
+              : "bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20"
+          }`}
+        >
+          {message.content}
+        </div>
       </div>
-    </div>
-  ))}
-
-  {isLoading && (
-    <div className="flex justify-start">
-      <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
-        <div className="flex items-center space-x-2">
-          <div className="animate-pulse">Thinking...</div>
-          <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+    ))}
+  
+    {isLoading && (
+      <div className="flex justify-start">
+        <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <div className="animate-pulse">Thinking...</div>
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )}
-</div>
+    )}
+  </div>
