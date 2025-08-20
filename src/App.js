@@ -673,9 +673,9 @@ const App = () => {
                 <div className="flex items-center space-x-2">
                   <div className="animate-pulse">Thinking...</div>
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
                   </div>
                 </div>
               </div>
