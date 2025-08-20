@@ -666,11 +666,21 @@ const App = () => {
               </div>
             </div>
           ))}
-
-          {isLoading && (
+           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <div className="animate-pulse">Thinking...</div>
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+
+
+
