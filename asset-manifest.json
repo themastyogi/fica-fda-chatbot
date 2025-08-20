@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/fica-fda-chatbot/static/css/main.af735193.css",
-    "main.js": "/fica-fda-chatbot/static/js/main.cd45ae9d.js",
+    "main.css": "/fica-fda-chatbot/static/css/main.f37cd22d.css",
+    "main.js": "/fica-fda-chatbot/static/js/main.8a78ca70.js",
     "index.html": "/fica-fda-chatbot/index.html",
-    "main.af735193.css.map": "/fica-fda-chatbot/static/css/main.af735193.css.map",
-    "main.cd45ae9d.js.map": "/fica-fda-chatbot/static/js/main.cd45ae9d.js.map"
+    "main.f37cd22d.css.map": "/fica-fda-chatbot/static/css/main.f37cd22d.css.map",
+    "main.8a78ca70.js.map": "/fica-fda-chatbot/static/js/main.8a78ca70.js.map"
   },
   "entrypoints": [
-    "static/css/main.af735193.css",
-    "static/js/main.cd45ae9d.js"
+    "static/css/main.f37cd22d.css",
+    "static/js/main.8a78ca70.js"
   ]
 }
