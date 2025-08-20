@@ -27,6 +27,18 @@ const App = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [typingDots, setTypingDots] = useState(0);
+
+  // Typing animation effect
+  React.useEffect(() => {
+    let interval;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setTypingDots(prev => (prev + 1) % 4);
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // User database - stored in component state
   const [userDatabase, setUserDatabase] = useState([
@@ -671,11 +683,32 @@ const App = () => {
             <div className="flex justify-start">
               <div className="bg-white/10 backdrop-blur-sm text-gray-100 border border-white/20 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <div className="animate-pulse">Thinking...</div>
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full typing-dot"></div>
+                  <div>Thinking</div>
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: '#60a5fa',
+                      animation: 'typing-bounce 1.4s infinite',
+                      animationDelay: '0s'
+                    }}></div>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: '#60a5fa',
+                      animation: 'typing-bounce 1.4s infinite',
+                      animationDelay: '0.2s'
+                    }}></div>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: '#60a5fa',
+                      animation: 'typing-bounce 1.4s infinite',
+                      animationDelay: '0.4s'
+                    }}></div>
                   </div>
                 </div>
               </div>
