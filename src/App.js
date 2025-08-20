@@ -27,18 +27,6 @@ const App = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-  const [typingDots, setTypingDots] = useState(0);
-
-  // Typing animation effect
-  React.useEffect(() => {
-    let interval;
-    if (isLoading) {
-      interval = setInterval(() => {
-        setTypingDots(prev => (prev + 1) % 4);
-      }, 500);
-    }
-    return () => clearInterval(interval);
-  }, [isLoading]);
 
   // User database - stored in component state
   const [userDatabase, setUserDatabase] = useState([
